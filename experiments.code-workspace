@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "image_classification"
+		},
+		{
+			"path": "relevant_semseg"
 		}
 	],
 	"settings": {}
