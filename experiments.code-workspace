@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "semantic_segmentation"
+		},
+		{
+			"path": "image_classification"
+		}
+	],
+	"settings": {}
+}
