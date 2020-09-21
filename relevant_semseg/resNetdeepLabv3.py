@@ -55,7 +55,7 @@ def conv3x3(in_planes, out_planes, stride=1):
 
 class ResNet(nn.Module):
 
-    def __init__(self, block, layers, output_stride, BatchNorm, layer_drop, pretrained=True):
+    def __init__(self, block, layers, output_stride, BatchNorm, layer_drop, pretrained=False):
         self.inplanes = 128
         super(ResNet, self).__init__()
         blocks = [1, 2, 4]
@@ -156,7 +156,7 @@ class ResNet(nn.Module):
                 m.bias.data.zero_()
 
 
-def ResNet101(output_stride, BatchNorm, layer_drop=0.5, pretrained=True):
+def ResNet101(output_stride, BatchNorm, layer_drop=0.5, pretrained=False): # Change pre-trained to True when loading pre-trained ImageNet weights.
     print('>>>> LOADING RESNET101 <<<<')
     model = ResNet(Bottleneck, [3, 4, 23, 3], output_stride, BatchNorm, layer_drop, pretrained=pretrained)
     if pretrained:

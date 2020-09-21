@@ -16,9 +16,8 @@ def generate_scale_label(image, label):
     label = np.array(label)
     w = 0.5 + random.randint(0, 15)/10.0
     h = 0.5 + random.randint(0, 15)/10.0
-    image = cv2.resize(image, None, fx=w, fy=h, interpolation=cv2.INTER_LINEAR)
+    image = cv2.resize(image, None, fx=w, f=h, interpolation=cv2.INTER_LINEAR)
     label = cv2.resize(label, None, fx=w, fy=h, interpolation=cv2.INTER_NEAREST)
-
     return image, label
 
 
@@ -76,27 +75,10 @@ class RandomCropsTrain:
         label = np.asarray(label_pad[h_off:h_off + self.crop_h, w_off:w_off + self.crop_w], np.float32)
 
         image = image.transpose((2, 0, 1))
-
-        if random.random() < 0.7:
-            label = self.sliding_windows_labels(label, 50, 50)
         
         return image.copy(), label.copy()
     
     
-    def sliding_windows_labels(self, label_tensor, patch_height, patch_width):
-        flag = False
-        for height in range(0, label_tensor.shape[0], patch_height):
-            if flag is True:
-                break
-            for width in range(0, label_tensor.shape[1], patch_width):
-                patch = label_tensor[height:height+patch_height, width:width+patch_width]
-                if np.all(patch == 13.):
-                    label_tensor[height:height+patch_height, width:width+patch_width] = 11.
-                    flag = True
-                    break
-        return label_tensor
-
-
 class ValidationTransform:
     def __init__(self, ignore_label=255):
         self.ignore_label = ignore_label

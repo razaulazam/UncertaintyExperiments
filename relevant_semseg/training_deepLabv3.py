@@ -17,8 +17,6 @@ use_gpu = torch.cuda.is_available()
 device = ('cuda:0' if use_gpu else 'cpu')
 
 curr_dir = os.getcwd()
-devices_avail = [0, 1, 2, 3]
-
 backbone = 'resnet'
 
 data_dir = '/fs/scratch/rng_cr_bcai_dl_students/OpenData/cityscapes/'
