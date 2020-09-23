@@ -16,16 +16,17 @@ def generate_scale_label(image, label):
     label = np.array(label)
     w = 0.5 + random.randint(0, 15)/10.0
     h = 0.5 + random.randint(0, 15)/10.0
-    image = cv2.resize(image, None, fx=w, f=h, interpolation=cv2.INTER_LINEAR)
+    image = cv2.resize(image, None, fx=w, fy=h, interpolation=cv2.INTER_LINEAR)
     label = cv2.resize(label, None, fx=w, fy=h, interpolation=cv2.INTER_NEAREST)
     return image, label
 
 
 class RandomCropsTrain:
-    def __init__(self, crop_size=(512, 512), ignore_label=255, padding=None):
+    def __init__(self, crop_size=(512, 512), ignore_label=255, padding=None, patch_size=None):
         self.crop_h, self.crop_w = crop_size
         self.ignore_label = ignore_label
-
+        self.patch_size = patch_size
+        self.count = -1
         self.id_to_trainid = {-1: ignore_label, 0: ignore_label, 1: ignore_label, 2: ignore_label,
                               3: ignore_label, 4: ignore_label, 5: ignore_label, 6: ignore_label,
                               7: 0, 8: 1, 9: ignore_label, 10: ignore_label, 11: 2, 12: 3, 13: 4,
@@ -70,15 +71,31 @@ class RandomCropsTrain:
         img_h, img_w = label_pad.shape
         h_off = random.randint(0, img_h - self.crop_h)
         w_off = random.randint(0, img_w - self.crop_w)
-
         image = np.asarray(img_pad[h_off:h_off + self.crop_h, w_off:w_off + self.crop_w], np.float32)
         label = np.asarray(label_pad[h_off:h_off + self.crop_h, w_off:w_off + self.crop_w], np.float32)
-
-        image = image.transpose((2, 0, 1))
+        
+        self._fill_patch(image, label)  
+        image = image.transpose((2, 0, 1))  
         
         return image.copy(), label.copy()
     
-    
+    def _fill_patch(self, image: np.ndarray, label: np.ndarray) -> None:
+        """Selects a random square patch, fill it with a certain color and assign a label at the same patch position
+            in the label tensor"""
+        # Number of training images = 2975
+        shape_image = image.shape 
+        self.count += 1
+        
+        patch_x = random.randint(0, shape_image[0] - self.patch_size)
+        patch_y = random.randint(0, shape_image[1] - self.patch_size)
+              
+        image[patch_x:patch_x+self.patch_size, patch_y:patch_y+self.patch_size, :] = 0
+        if self.count % 2 == 0:
+            label[patch_x:patch_x+self.patch_size, patch_y:patch_y+self.patch_size] = 10 # sky
+        else:
+            label[patch_x:patch_x+self.patch_size, patch_y:patch_y+self.patch_size] = 12 # rider
+        
+        
 class ValidationTransform:
     def __init__(self, ignore_label=255):
         self.ignore_label = ignore_label

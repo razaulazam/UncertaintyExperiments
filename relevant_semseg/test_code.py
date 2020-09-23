@@ -2,30 +2,29 @@ import torch
 import torch.nn as nn
 import matplotlib.pyplot as plt
 import numpy as np
+import cv2
 from deepLabv3 import DeepLab
-from pprint import pprint
+from transform_deepLabv3 import RandomCropsTrain
 
 
-class testmodel(nn.Module):
-    def __init__(self): 
-        super(testmodel, self).__init__()
-        self.l1 = nn.Linear(10, 20)
-        self.l2 = nn.Linear(20, 100)
-        self.l3 = nn.Dropout(p=0.2)
-        self.l4 = nn.Linear(100, 4)
-        
-    def forward(self, x):
-        x = self.l1(x)
-        x = self.l2(x)
-        x = self.l3(x)
-        x = self.l4(x)
-        
-        return x
+image_transform = RandomCropsTrain(crop_size=(10, 10), patch_size=5)
 
+image = np.random.random((20, 20, 3))*255.
+label = np.random.randint(0, 33, size=(20, 20))
 
-model = testmodel()
-model_deep = DeepLab()
-pprint(model_deep)
+image_one = np.random.random((20, 20, 3))*255.
+label_one = np.random.randint(0, 33, size=(20, 20))
+
+image_t, label_t = image_transform(image, label)
+image_one_t, label_one_t = image_transform(image_one, label_one)
+
+fig, (ax1, ax2) = plt.subplots(1, 2)
+ax2.imshow(image/255)
+ax1.imshow(np.transpose(image_t, (1, 2, 0)))
+plt.show()
+
+print(label_t)
+print(label_one_t)
 
     
 
