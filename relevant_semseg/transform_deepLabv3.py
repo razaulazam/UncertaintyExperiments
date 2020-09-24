@@ -26,6 +26,7 @@ class RandomCropsTrain:
         self.crop_h, self.crop_w = crop_size
         self.ignore_label = ignore_label
         self.patch_size = patch_size
+        self.num_train_images = 2975
         self.count = -1
         self.id_to_trainid = {-1: ignore_label, 0: ignore_label, 1: ignore_label, 2: ignore_label,
                               3: ignore_label, 4: ignore_label, 5: ignore_label, 6: ignore_label,
@@ -82,14 +83,17 @@ class RandomCropsTrain:
     def _fill_patch(self, image: np.ndarray, label: np.ndarray) -> None:
         """Selects a random square patch, fill it with a certain color and assign a label at the same patch position
             in the label tensor"""
-        # Number of training images = 2975
+        # Number of training images = 2975            
         shape_image = image.shape 
         self.count += 1
+        
+        if self.count == self.num_train_images:
+            self.count = 0
         
         patch_x = random.randint(0, shape_image[0] - self.patch_size)
         patch_y = random.randint(0, shape_image[1] - self.patch_size)
               
-        image[patch_x:patch_x+self.patch_size, patch_y:patch_y+self.patch_size, :] = 0
+        image[patch_x:patch_x+self.patch_size, patch_y:patch_y+self.patch_size, :] = 0.
         if self.count % 2 == 0:
             label[patch_x:patch_x+self.patch_size, patch_y:patch_y+self.patch_size] = 10 # sky
         else:
@@ -209,6 +213,7 @@ class Crop(object):
         return image, label
 
 
+
 class RandRotate(object):
     # Randomly rotate image & label with rotate factor in [rotate_min, rotate_max]
     def __init__(self, rotate, padding, ignore_label=255, p=0.5):
@@ -239,6 +244,7 @@ class RandRotate(object):
         return image, label
 
 
+
 class RandomHorizontalFlip(object):
     def __init__(self, p=0.5):
         self.p = p
@@ -250,6 +256,7 @@ class RandomHorizontalFlip(object):
         return image, label
 
 
+
 class RandomGaussianBlur(object):
     def __init__(self, radius=5):
         self.radius = radius
@@ -258,6 +265,7 @@ class RandomGaussianBlur(object):
         if random.random() < 0.5:
             image = cv2.GaussianBlur(image, (self.radius, self.radius), 0)
         return image, label
+
 
 
 center_crop = Crop([712, 712], padding=None)

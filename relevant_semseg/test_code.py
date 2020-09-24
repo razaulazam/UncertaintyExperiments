@@ -16,7 +16,9 @@ image_one = np.random.random((20, 20, 3))*255.
 label_one = np.random.randint(0, 33, size=(20, 20))
 
 image_t, label_t = image_transform(image, label)
-image_one_t, label_one_t = image_transform(image_one, label_one)
+
+
+
 
 fig, (ax1, ax2) = plt.subplots(1, 2)
 ax2.imshow(image/255)

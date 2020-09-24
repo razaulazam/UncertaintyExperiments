@@ -16,12 +16,13 @@ import math
 use_gpu = torch.cuda.is_available()
 device = ('cuda:0' if use_gpu else 'cpu')
 
-curr_dir = os.getcwd()
+curr_dir = os.getcwd() 
 backbone = 'resnet'
 
 data_dir = '/fs/scratch/rng_cr_bcai_dl_students/OpenData/cityscapes/'
-save_model_checkpoints = curr_dir + '/deepLabv3_training_alea_epis_0.2_%s_car_person' % backbone
-log_dir_tensor_board = curr_dir + '/deepLabv3_training_logs_alea_epis_0.2_%s_car_person' % backbone
+save_model_checkpoints = curr_dir + '/deepLabv3_training_alea_epis_0.2_%s_mixed_10_12' % backbone
+log_dir_tensor_board = curr_dir + '/deepLabv3_training_logs_alea_epis_0.2_%s_mixed_10_12' % backbone
+
 
 if os.path.isdir(save_model_checkpoints):
     print('>>>> REMOVING AND MAKING THE DIRECTORY FOR MODEL CHECKPOINTS AGAIN <<<<\n')
@@ -63,6 +64,7 @@ class_encodings = OrderedDict([
             ('motorcycle', (0, 0, 230)),
             ('bicycle', (119, 11, 32))])
 
+
 batch_size = 8
 total_epochs = 230
 learning_rate = 0.01
@@ -82,7 +84,6 @@ net = DeepLab(layer_drop=0.2)
 train_params = [{'params': net.get_1x_lr_params(), 'lr': learning_rate},
                 {'params': net.get_10x_lr_params(), 'lr': learning_rate * 10}]
 
-
 if torch.cuda.device_count() > 1:
     net = nn.DataParallel(net)
 
@@ -92,7 +93,6 @@ optimizer_required = optim.SGD(train_params, lr=learning_rate, weight_decay=weig
 criterion_train = heteroscedastic_loss_classification_not_vectorized
 
 print("\nTRAINING...\n")
-
 
 def train(net, train_data_loader, optimizer_required, criterion_train, device, epoch):
     net.train()
@@ -209,7 +209,7 @@ for epochs in range(start_epoch, total_epochs):
         model_path = os.path.join(save_model_checkpoints, 'BEST_MODEL_EPOCH_'+str(epochs)+'.tar')
         torch.save(checkpoint, model_path)
 
-        summary_filename = os.path.join(curr_dir, ('summary_deepLabv3_alea_epis_0.2_%s_car_person.txt' % backbone))
+        summary_filename = os.path.join(curr_dir, ('summary_deepLabv3_alea_epis_0.2_%s_mixed_10_12.txt' % backbone))
         with open(summary_filename, 'w') as summary_file:
             summary_file.write("\nBEST VALIDATION\n")
             summary_file.write("EPOCH: {0}\n".format(epochs))
