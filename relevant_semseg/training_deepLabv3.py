@@ -19,7 +19,7 @@ device = ('cuda:0' if use_gpu else 'cpu')
 curr_dir = os.getcwd() 
 backbone = 'resnet'
 
-data_dir = '/fs/scratch/rng_cr_bcai_dl_students/OpenData/cityscapes/'
+data_dir = '/fs/scratch/rng_cr_bcai_dl_students/OpenData/cityscapes/' # path to the data directory
 save_model_checkpoints = curr_dir + '/deepLabv3_training_alea_epis_0.2_%s_mixed_10_12' % backbone
 log_dir_tensor_board = curr_dir + '/deepLabv3_training_logs_alea_epis_0.2_%s_mixed_10_12' % backbone
 

@@ -5,7 +5,7 @@ import torch
 import torch.nn.functional as F
 
 curr_dir = os.getcwd()
-model_dir = curr_dir + '/resNet101/resnet101_v2.pth'
+model_dir = curr_dir + '/resNet101/resnet101_v2.pth' # The directory where pre-trained network should be placed.
 
 
 class Bottleneck(nn.Module):
