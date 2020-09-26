@@ -129,9 +129,9 @@ class ValidationTransform:
 
 
 class TestTransform:
-    def __init__(self, ignore_label=255):
+    def __init__(self, ignore_label=255, patch_size=None):
         self.ignore_label = ignore_label
-
+        self.patch_size = patch_size
         self.id_to_trainid = {-1: ignore_label, 0: ignore_label, 1: ignore_label, 2: ignore_label,
                               3: ignore_label, 4: ignore_label, 5: ignore_label, 6: ignore_label,
                               7: 0, 8: 1, 9: ignore_label, 10: ignore_label, 11: 2, 12: 3, 13: 4,
@@ -151,9 +151,20 @@ class TestTransform:
         mean = (103.93, 116.77, 123.68)
         image -= mean
 
+        self._draw_patch(image)
         image = image.transpose((2, 0, 1))
 
         return image.copy(), label.copy()
+    
+    def _draw_patch(self, image: np.ndarray) -> None:
+        """Function which draws a patch at random locations within an image"""
+        shape_image = image.shape
+             
+        patch_x = random.randint(0, shape_image[0] - self.patch_size)
+        patch_y = random.randint(0, shape_image[1] - self.patch_size)
+              
+        image[patch_x:patch_x+self.patch_size, patch_y:patch_y+self.patch_size, :] = 0
+        
 
 
 class Crop(object):
